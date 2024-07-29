@@ -3,13 +3,15 @@ package com.example.notesbanale
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Note
+import android.util.Log
+//import android.provider.ContactsContract.CommonDataKinds.Note
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.notesbanale.Models.Note
 import com.example.notesbanale.databinding.ActivityAddNoteBinding
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -26,7 +28,9 @@ class AddNote : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityAddNoteBinding.inflate(layoutInflater)
+
         enableEdgeToEdge()
         setContentView(binding.root)
 
@@ -46,34 +50,38 @@ class AddNote : AppCompatActivity() {
 
         binding.imgCheck.setOnClickListener {
             val title = binding.etTitle.text.toString()
-            val note = binding.etNote.toString()
+            val note_desc = binding.etNote.text.toString()
+           //Toast.makeText(this, "$title $notes", Toast.LENGTH_SHORT).show()
+            //Log.d("testing123","$title $notes")
 
-            if (title.isNotEmpty() || note.isNotEmpty()){
+            if (title.isNotEmpty() || note_desc.isNotEmpty()){
                 val formatter = SimpleDateFormat("EEE, d MMM yyy HH:mm a")
+                val time = formatter.format(Date())
+                Log.d("testing123","$time")
 
-                if (isUpdate){
+                if(isUpdate) {
+                    note =Note(old_notes.id,title,note_desc,formatter.format(Date()))
 
-                    note=Note(
 
-                        old_notes.id,title,note,formatter.format(Date())
-
-                    )
+                }else{
+                    note= Note(null,title,note_desc,formatter.format(Date()))
                 }
-
-                val intent = Intent()
+                val intent= Intent()
                 intent.putExtra("note",note)
+
                 setResult(Activity.RESULT_OK,intent)
                 finish()
 
-            }else{
-                Toast.makeText(this@AddNote,"Please Enter Some Data",Toast.LENGTH_SHORT).show()
+
+            }
+
+            else{
+                Toast.makeText(this@AddNote,"Please enter some data ",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
         }
-
-        binding.imgBackArrow.setOnClickListener {
+        binding.imgBackArrow.setOnClickListener(){
             onBackPressed()
         }
-
     }
 }
